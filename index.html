@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tab Example</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"> <!-- Added Poppins font -->
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif; /* Applied Poppins font */
             background-color: #f0f4f8;
             color: #333;
             display: flex;
@@ -59,8 +60,8 @@
             font-size: 16px;
         }
         button#copy {
-    margin-top: 15px;
-}
+            margin-top: 15px;
+        }
         .copy-btn {
             width: 100%;
             padding: 12px;
@@ -112,6 +113,8 @@
             padding: 20px;
             background-color: #f9f9f9;
             border-radius: 8px;
+            max-height: 500px; /* Added max-height */
+            overflow-y: auto; /* Added scroll behavior */
         }
         .tab-content.active {
             display: block;
@@ -255,7 +258,7 @@
         function addLine() {
             const line = document.createElement('div');
             line.className = 'line';
-            line.innerHTML = `
+            line.innerHTML = ` 
                 <div class="line-title">
                     <span>Start</span>
                     <span>End</span>

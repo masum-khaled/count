@@ -22,13 +22,96 @@
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            margin-bottom: 30px;
         }
         h1 {
             text-align: center;
             color: #007BFF;
+        }
+        textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            height: 150px;
+            resize: none;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            text-align: left;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-size: 16px;
+        }
+        .copy-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .copy-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Tab styling */
+        .tabs {
+            display: flex;
+            justify-content: center;
             margin-bottom: 20px;
         }
+        .tab-button {
+            padding: 15px 30px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 20px;
+            margin: 0 10px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .tab-button:hover {
+            background-color: #ddd;
+            transform: scale(1.1);
+        }
+        .tab-button.active {
+            background-color: #007BFF;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Manual Calculator Inputs */
         .line {
             display: flex;
             flex-direction: column;
@@ -47,56 +130,9 @@
             border: 1px solid #cccccc;
             border-radius: 5px;
         }
-        .line-result {
-            margin-top: 5px;
-            font-size: 14px;
-            color: #555555;
-            text-align: center;
-        }
-        .buttons {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-        }
-        button#add-line {
-            background-color: #4CAF50;
-            color: white;
-        }
-        button#calculate {
-            background-color: #007BFF;
-            color: white;
-        }
-        button#clear {
-            background-color: #FF4C4C;
-            color: white;
-        }
-        button#copy {
-            background-color: SteelBlue;
-            color: white;
-            display: none;
-            margin-top: 20px;
-        }
-        .result-container {
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-        .result {
-            font-size: 18px;
-            text-align: center;
-            color: #333333;
-        }
-        .result-wrapper {
-            text-align: right;
-        }
+
+        /* Footer */
         footer {
-            width: 100%;
             margin-top: 40px;
             background-color: #FF6F61;
             text-align: center;
@@ -106,30 +142,38 @@
             border-radius: 5px;
         }
 
-        /* Tabs styles */
-        .tabs {
+        /* Button styles */
+        .buttons {
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .tab-button {
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #f1f1f1;
-            border: 1px solid #ccc;
+        #add-line {
+            background-color: #28a745;
+            color: white;
             border-radius: 5px;
         }
-        .tab-button.active {
-            background-color: #ddd;
-            font-weight: bold;
+        #add-line:hover {
+            background-color: #218838;
         }
-        .tab-content {
-            display: none;
+        #calculate {
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
-        .tab-content.active {
-            display: block;
-            padding: 20px;
-            background-color: #f9f9f9;
+        #calculate:hover {
+            background-color: #0056b3;
+        }
+        #clear {
+            background-color: #dc3545;
+            color: white;
+            border-radius: 5px;
+        }
+        #clear:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
@@ -153,13 +197,13 @@
         <div class="container">
             <h1>Hours Range Calculator</h1>
             <div id="lines-container">
-                <!-- Initial lines will be added here -->
+                <!-- Initial lines will be added here (2 lines initially) -->
             </div>
+            <button id="add-line">+ Add More Lines</button>
             <div class="buttons">
-                <button id="add-line">+ Add More Lines</button>
+                <button id="calculate">Calculate</button>
                 <button id="clear">Clear</button>
             </div>
-            <button id="calculate">Calculate</button>
             <div class="result-container">
                 <div id="individual-results"></div>
                 <div class="result" id="result">Total Time: 0 Hours, 0 Minutes</div>
@@ -177,60 +221,19 @@
     <script>
         // Function to open a specific tab
         function openTab(event, tabName) {
+            // Hide all tab contents
             const tabContents = document.querySelectorAll('.tab-content');
             tabContents.forEach(tab => tab.classList.remove('active'));
+            // Remove active class from all tab buttons
             const tabButtons = document.querySelectorAll('.tab-button');
             tabButtons.forEach(button => button.classList.remove('active'));
+            // Show the selected tab content
             document.getElementById(tabName).classList.add('active');
+            // Add active class to the clicked tab button
             event.currentTarget.classList.add('active');
         }
 
-        // Function to parse time and calculate hours
-        function parseTime(time) {
-            if (time === '00h' || time === '00:00') {
-                return 24 * 60; // Treat 00h or 00:00 as 24h
-            }
-            if (time.includes('h')) {
-                let [hours, minutes] = time.split('h').map(Number);
-                if (isNaN(minutes)) minutes = 0;
-                return hours * 60 + minutes;
-            } else {
-                const [hours, minutes] = time.split(':').map(Number);
-                return hours * 60 + minutes;
-            }
-        }
-
-        function parseTimeRange(timeRange) {
-            const cleanedRange = timeRange.replace(/\s+/g, '-'); // Replace spaces with hyphens
-            const [start, end] = cleanedRange.split('-').map(parseTime);
-            const adjustedEnd = end <= start ? end + 24 * 60 : end;
-            return (adjustedEnd - start) / 60;
-        }
-
-        function calculateHours() {
-            let input = document.getElementById('inputSchedule').value;
-            input = input.replace(/\s+/g, ' ').trim(); // Normalize whitespace
-            const timeRanges = input.match(/\d{1,2}[:h]?\d{0,2}(?:\s|-)\d{1,2}[:h]?\d{0,2}/g) || [];
-            let totalHours = 0;
-            let resultText = '';
-            timeRanges.forEach(range => {
-                const hours = parseTimeRange(range);
-                resultText += `${range}, Hours: ${hours.toFixed(2)}\n`;
-                totalHours += hours;
-            });
-            resultText += `\nTotal Hours: ${totalHours.toFixed(2)}`;
-            document.getElementById('result').innerText = resultText;
-            document.getElementById('copyBtn').style.display = 'block'; // Show the copy button
-        }
-
-        function copyToClipboard() {
-            const resultText = document.getElementById('result').innerText;
-            navigator.clipboard.writeText(resultText).then(() => {
-                alert('Result copied to clipboard');
-            });
-        }
-
-        // Manual calculator functionality
+        // Add 2 initial lines
         const linesContainer = document.getElementById('lines-container');
         const addLineButton = document.getElementById('add-line');
         const calculateButton = document.getElementById('calculate');
@@ -256,22 +259,18 @@
             linesContainer.appendChild(line);
         }
 
-        // Add 2 initial lines
+        // Initially add 2 lines
         for (let i = 0; i < 2; i++) {
             addLine();
         }
 
+        // Event listener to add more lines
         addLineButton.addEventListener('click', addLine);
 
-        function toOrdinal(n) {
-            const s = ["th", "st", "nd", "rd"];
-            const v = n % 100;
-            return n + (s[(v - 20) % 10] || s[v] || s[0]);
-        }
-
+        // Event listener to calculate the total time
         calculateButton.addEventListener('click', () => {
             let totalMinutes = 0;
-            individualResultsDiv.innerHTML = '';
+            individualResultsDiv.innerHTML = ''; // Clear previous results
             const startTimeInputs = document.querySelectorAll('.start-time');
             const endTimeInputs = document.querySelectorAll('.end-time');
             startTimeInputs.forEach((startInput, index) => {
@@ -280,6 +279,7 @@
                 if (startInput.value && endInput.value) {
                     const [startHours, startMinutes] = startInput.value.split(':').map(Number);
                     const [endHours, endMinutes] = endInput.value.split(':').map(Number);
+                    // Calculate the time difference in minutes
                     const startTotalMinutes = startHours * 60 + startMinutes;
                     const endTotalMinutes = endHours * 60 + endMinutes;
                     let diffMinutes;
@@ -288,20 +288,22 @@
                     } else {
                         diffMinutes = (24 * 60 - startTotalMinutes) + endTotalMinutes;
                     }
+                    // If the result is not 0, add it to the results
                     if (diffMinutes > 0) {
                         const hours = Math.floor(diffMinutes / 60);
                         const minutes = diffMinutes % 60;
                         resultLine.textContent = `${toOrdinal(index + 1)}: ${hours} Hours, ${minutes} Minutes`;
+                        // Add to total
                         totalMinutes += diffMinutes;
                         individualResultsDiv.appendChild(resultLine);
                     }
                 }
             });
-
+            // Convert total minutes to hours and minutes
             const totalHours = Math.floor(totalMinutes / 60);
             const remainingMinutes = totalMinutes % 60;
             resultDiv.textContent = `Total Time: ${totalHours} Hours, ${remainingMinutes} Minutes`;
-
+            // Show the copy button if there are results
             if (individualResultsDiv.children.length > 0) {
                 copyButton.style.display = 'block';
             } else {
@@ -309,19 +311,22 @@
             }
         });
 
+        // Event listener to clear all inputs and reset the result
         clearButton.addEventListener('click', () => {
             const inputs = document.querySelectorAll('.start-time, .end-time');
             inputs.forEach(input => input.value = '');
             individualResultsDiv.innerHTML = '';
             resultDiv.textContent = 'Total Time: 0 Hours, 0 Minutes';
-            copyButton.style.display = 'none';
+            copyButton.style.display = 'none'; // Hide the copy button
         });
 
+        // Event listener to copy results to clipboard
         copyButton.addEventListener('click', () => {
             let text = 'Results:\n';
             const individualResults = individualResultsDiv.textContent;
             text += individualResults;
             text += `\n${resultDiv.textContent}`;
+            // Copy to clipboard
             navigator.clipboard.writeText(text).then(() => {
                 alert('Results copied to clipboard!');
             });

@@ -45,7 +45,8 @@
       display: none;
       padding: 20px;
       margin: 0 auto;
-      width: 300px;
+      width: 100%;
+      max-width: 400px;
       background-color: #ffffff;
       border: 1px solid #ddd;
       border-radius: 8px;
@@ -65,9 +66,9 @@
     /* Buttons */
     button {
       display: block;
-      width: 100%;
+      width: 48%;
       padding: 10px;
-      margin: 5px 0;
+      margin: 5px 1%;
       color: #fff;
       font-size: 14px;
       border: none;
@@ -79,16 +80,20 @@
       opacity: 0.9;
     }
 
-    button[onclick="autoCalculate()"] {
+    button[onclick="autoCalculate()"],
+    button[onclick="manualCalculate()"] {
       background-color: #007bff;
     }
 
-    button[onclick="addRow()"] {
-      background-color: #28a745;
+    button[onclick="clearManual()"],
+    button[onclick="clearAuto()"] {
+      background-color: #dc3545;
     }
 
-    button[onclick="clearManual()"] {
-      background-color: #dc3545;
+    button[onclick="copyAutoResult()"],
+    button[onclick="copyManualResult()"] {
+      background-color: #6c757d;
+      width: 100%;
     }
 
     /* Time Row Styling */
@@ -121,6 +126,13 @@
       padding-top: 10px;
     }
 
+    /* Buttons Inline */
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .tabcontent {
@@ -139,7 +151,11 @@
   <div id="auto" class="tabcontent">
     <h2>Auto Hours Calculator</h2>
     <textarea id="auto_input" placeholder="Paste your schedule here (e.g., 09:00-12:00, 13:00-15:00)"></textarea>
-    <button onclick="autoCalculate()">Calculate Total Hours</button>
+    <div class="button-row">
+      <button onclick="autoCalculate()">Calculate</button>
+      <button onclick="clearAuto()">Clear</button>
+    </div>
+    <button onclick="copyAutoResult()">Copy Results</button>
     <div id="auto_result" class="results"></div>
   </div>
 
@@ -155,8 +171,11 @@
       </div>
     </div>
     <button onclick="addRow()">+ Add More Lines</button>
-    <button onclick="manualCalculate()">Calculate</button>
-    <button onclick="clearManual()">Clear</button>
+    <div class="button-row">
+      <button onclick="manualCalculate()">Calculate</button>
+      <button onclick="clearManual()">Clear</button>
+    </div>
+    <button onclick="copyManualResult()">Copy Results</button>
     <div id="manual_result" class="results"></div>
   </div>
 
@@ -206,6 +225,17 @@
       const totalHours = Math.floor(totalMinutes / 60);
       const totalMinutesRemaining = totalMinutes % 60;
       resultDiv.innerHTML += `<b>Total Time: ${totalHours} Hours, ${totalMinutesRemaining} Minutes</b>`;
+    }
+
+    function clearAuto() {
+      document.getElementById("auto_input").value = "";
+      document.getElementById("auto_result").textContent = "";
+    }
+
+    function copyAutoResult() {
+      const result = document.getElementById("auto_result").textContent;
+      navigator.clipboard.writeText(result);
+      alert("Results copied to clipboard!");
     }
 
     // Manual Hours Calculator
@@ -260,6 +290,12 @@
         </div>
       `;
       document.getElementById("manual_result").textContent = "";
+    }
+
+    function copyManualResult() {
+      const result = document.getElementById("manual_result").textContent;
+      navigator.clipboard.writeText(result);
+      alert("Results copied to clipboard!");
     }
 
     // Set Default Tab

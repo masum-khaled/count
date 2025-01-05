@@ -146,6 +146,17 @@
         width: 100%;
       }
     }
+
+    /* Footer Styling */
+    footer {
+      background-color: #dc3545;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
   </style>
 </head>
 <body>
@@ -186,6 +197,10 @@
     <button id="copy_manual_button" onclick="copyManualResult()" style="display: none;">Copy Results</button>
   </div>
 
+  <footer>
+    Created by Masum Khaled.
+  </footer>
+
   <script>
     // Open Tab Functionality
     function openTab(evt, tabName) {
@@ -219,9 +234,19 @@
       let totalMinutes = 0;
 
       timeBlocks.forEach((block, index) => {
-        const [start, end] = block.split("-").map(time => time.trim());
+        const cleanedBlock = block.trim().replace("h", ":00").replace(/\s+/g, "");  // Trim spaces around and replace "h" with ":00"
+        const [start, end] = cleanedBlock.split("-").map(time => time.trim()); // Trim any remaining spaces around times
+
+        if (start === "00:00") start = "24:00"; // Treat "00:00" as "24:00"
         const [startH, startM] = start.split(":").map(Number);
-        const [endH, endM] = end.split(":").map(Number);
+        let [endH, endM] = end.split(":").map(Number);
+
+        // Fix for ranges like 9h-00h and 17h30-00h30
+        if (endH === 24 && endM === 0) {
+          endH = 24;
+          endM = 0;
+        }
+
         const blockMinutes = (endH * 60 + endM) - (startH * 60 + startM);
         totalMinutes += blockMinutes;
 

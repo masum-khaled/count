@@ -26,10 +26,10 @@
             border-radius: 8px;
             width: 100%;
             box-sizing: border-box;
+            text-align: center; /* Center content in container */
         }
 
         h1 {
-            text-align: center;
             color: #007BFF;
             font-size: 24px;
         }
@@ -50,6 +50,7 @@
             font-size: 16px;
             margin: 0 10px;
             transition: background-color 0.3s ease;
+            width: auto;
         }
 
         .tab-button.active {
@@ -59,6 +60,7 @@
 
         .tab-content {
             display: none;
+            width: 100%;
         }
 
         .tab-content.active {
@@ -68,6 +70,7 @@
             border-radius: 5px;
             background-color: #f9f9f9;
             width: 100%;
+            text-align: center; /* Center content in tab */
         }
 
         .line {
@@ -101,8 +104,9 @@
         .buttons {
             margin-top: 20px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             flex-wrap: wrap;
+            gap: 10px;
         }
 
         button {
@@ -326,7 +330,7 @@
                     <span>Start</span>
                     <span>End</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; gap: 10px;">
+                <div style="display: flex; justify-content: center; gap: 10px;">
                     <input type="time" class="start-time">
                     <input type="time" class="end-time">
                 </div>

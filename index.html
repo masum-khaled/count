@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tab Example</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"> <!-- Added Poppins font -->
     <style>
         body {
-            font-family: 'Poppins', sans-serif; /* Applied Poppins font */
+            font-family: 'Poppins', sans-serif;
             background-color: #f0f4f8;
             color: #333;
             display: flex;
@@ -16,6 +15,7 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
         .container {
             max-width: 700px;
@@ -23,9 +23,9 @@
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            overflow-y: auto; /* Enable vertical scroll */
         }
         h1 {
-            font-size: 22px;
             text-align: center;
             color: #007BFF;
         }
@@ -47,7 +47,6 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-family: 'Poppins', sans-serif;
             font-size: 16px;
             transition: background-color 0.3s ease;
             height: 48px; /* Fixed height for uniformity */
@@ -95,7 +94,7 @@
             border: none;
             border-radius: 5px;
             margin: 0 10px;
-            font-family: 'Poppins', sans-serif;
+            font-weight: bold;
             transition: background-color 0.3s ease, transform 0.2s ease;
             height: 48px; /* Fixed height for uniformity */
         }
@@ -115,8 +114,6 @@
             padding: 20px;
             background-color: #f9f9f9;
             border-radius: 8px;
-            max-height: 500px; /* Added max-height */
-            overflow-y: auto; /* Added scroll behavior */
         }
         .tab-content.active {
             display: block;
@@ -133,6 +130,7 @@
             justify-content: space-between;
             font-weight: bold;
             margin-bottom: 5px;
+            font-size: 10px; /* Label size */
         }
         .line input {
             width: 48%;
@@ -146,7 +144,7 @@
         footer {
             width: 100%;
             margin: 30px;
-            background-color: #B0DCE3;
+            background-color: #dc3545; /* Danger color */
             text-align: center;
             padding: 10px 10px;
             color: white;
@@ -189,6 +187,11 @@
         }
         #clear:hover {
             background-color: #c82333;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .container::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
@@ -260,7 +263,7 @@
         function addLine() {
             const line = document.createElement('div');
             line.className = 'line';
-            line.innerHTML = ` 
+            line.innerHTML = `
                 <div class="line-title">
                     <span>Start</span>
                     <span>End</span>

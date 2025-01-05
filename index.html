@@ -12,72 +12,29 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Adjust the layout */
             height: 100vh;
             margin: 0;
         }
+
         .container {
             max-width: 600px;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            width: 100%;
         }
+
         h1 {
             text-align: center;
             color: #007BFF;
         }
-        textarea {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            height: 150px;
-            resize: none;
-            font-size: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .result {
-            text-align: left;
-            margin-top: 20px;
-            white-space: pre-wrap;
-            font-size: 16px;
-        }
-        .copy-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-            display: none;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-        .copy-btn:hover {
-            background-color: #218838;
-        }
 
-        /* Auto Calculator CSS */
+        /* Tabs styling */
         .tabs {
             display: flex;
-            justify-content: space-around;
+            justify-content: center; /* Center the tab buttons */
             margin-bottom: 20px;
             width: 100%;
         }
@@ -89,6 +46,8 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
+            margin: 0 10px; /* Space between tabs */
+            transition: background-color 0.3s ease;
         }
 
         .tab-button.active {
@@ -96,6 +55,7 @@
             font-weight: bold;
         }
 
+        /* Tab content */
         .tab-content {
             display: none;
         }
@@ -109,7 +69,7 @@
             width: 100%;
         }
 
-        /* Manual Calculator CSS */
+        /* Manual Calculator styling */
         .line {
             display: flex;
             flex-direction: column;
@@ -181,14 +141,19 @@
             text-align: right; /* Aligns copy button */
         }
 
+        /* Footer styling */
         footer {
-            margin-top: 40px; /* Space above footer */
+            width: 100%;
+            margin-top: 40px;
             background-color: #FF6F61; /* Soft red background */
             text-align: center;
             padding: 10px 0;
             color: white;
             font-size: 14px;
             border-radius: 5px;
+            position: relative;
+            bottom: 0;
+            left: 0;
         }
     </style>
 </head>
@@ -212,7 +177,7 @@
         <div class="container">
             <h1>Hours Range Calculator</h1>
             <div id="lines-container">
-                <!-- Initial 2 lines will be added here -->
+                <!-- Initial lines will be added here -->
             </div>
             <button id="add-line">+ Add More Lines</button>
             <div class="buttons">
@@ -251,7 +216,12 @@
             event.currentTarget.classList.add('active');
         }
 
-        // Example Auto Calculate function
+        // Set default tab to Auto Calculate
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelector('.tab-button').click();
+        });
+
+        // Auto Calculate function
         function calculateHours() {
             let input = document.getElementById('inputSchedule').value;
             input = input.replace(/\s+/g, ' ').trim(); // Normalize whitespace
@@ -270,6 +240,30 @@
             document.getElementById('copyBtn').style.display = 'block'; // Show the copy button
         }
 
+        function parseTime(time) {
+            if (time === '00h' || time === '00:00') {
+                return 24 * 60; // Treat 00h or 00:00 as 24h
+            }
+            if (time.includes('h')) {
+                let [hours, minutes] = time.split('h').map(Number);
+                if (isNaN(minutes)) minutes = 0;
+                return hours * 60 + minutes;
+            } else {
+                const [hours, minutes] = time.split(':').map(Number);
+                return hours * 60 + minutes;
+            }
+        }
+
+        function parseTimeRange(timeRange) {
+            const cleanedRange = timeRange.replace(/\s+/g, '-'); // Replace spaces with hyphens
+            const [start, end] = cleanedRange.split('-').map(parseTime);
+
+            // Handle cases where the end time is less than the start time (e.g., 17h30-00h30)
+            const adjustedEnd = end <= start ? end + 24 * 60 : end;
+
+            return (adjustedEnd - start) / 60;
+        }
+
         function copyToClipboard() {
             const resultText = document.getElementById('result').innerText;
             navigator.clipboard.writeText(resultText).then(() => {
@@ -277,7 +271,7 @@
             });
         }
 
-        // Manual calculator functions
+        // Manual Calculator logic
         const linesContainer = document.getElementById('lines-container');
         const addLineButton = document.getElementById('add-line');
         const calculateButton = document.getElementById('calculate');
@@ -304,13 +298,20 @@
             linesContainer.appendChild(line);
         }
 
-        // Add 2 initial lines
+        // Add 2 initial lines (adjusted as per your request)
         for (let i = 0; i < 2; i++) {
             addLine();
         }
 
         // Event listener to add more lines
         addLineButton.addEventListener('click', addLine);
+
+        // Convert number to ordinal (1 -> 1st, 2 -> 2nd, etc.)
+        function toOrdinal(n) {
+            const s = ["th", "st", "nd", "rd"];
+            const v = n % 100;
+            return n + (s[(v - 20) % 10] || s[v] || s[0]);
+        }
 
         // Event listener to calculate the total time
         calculateButton.addEventListener('click', () => {
@@ -321,71 +322,50 @@
             const endTimeInputs = document.querySelectorAll('.end-time');
 
             startTimeInputs.forEach((startInput, index) => {
-                const endInput = endTimeInputs[index];
-                const resultLine = document.createElement('div');
+                const startTime = startInput.value;
+                const endTime = endTimeInputs[index].value;
 
-                if (startInput.value && endInput.value) {
-                    const [startHours, startMinutes] = startInput.value.split(':').map(Number);
-                    const [endHours, endMinutes] = endInput.value.split(':').map(Number);
+                if (startTime && endTime) {
+                    const startTimeInMinutes = timeToMinutes(startTime);
+                    const endTimeInMinutes = timeToMinutes(endTime);
+                    const duration = endTimeInMinutes - startTimeInMinutes;
+                    totalMinutes += duration;
 
-                    // Calculate the time difference in minutes
-                    const startTotalMinutes = startHours * 60 + startMinutes;
-                    const endTotalMinutes = endHours * 60 + endMinutes;
-
-                    let diffMinutes;
-                    if (endTotalMinutes >= startTotalMinutes) {
-                        diffMinutes = endTotalMinutes - startTotalMinutes;
-                    } else {
-                        diffMinutes = (24 * 60 - startTotalMinutes) + endTotalMinutes;
-                    }
-
-                    // If the result is not 0, add it to the results
-                    if (diffMinutes > 0) {
-                        const hours = Math.floor(diffMinutes / 60);
-                        const minutes = diffMinutes % 60;
-                        resultLine.textContent = `${toOrdinal(index + 1)}: ${hours} Hours, ${minutes} Minutes`;
-
-                        // Add to total
-                        totalMinutes += diffMinutes;
-
-                        individualResultsDiv.appendChild(resultLine);
-                    }
+                    individualResultsDiv.innerHTML += `
+                        <div>${toOrdinal(index + 1)}: ${startTime} - ${endTime} = ${formatDuration(duration)}</div>
+                    `;
                 }
             });
 
-            // Convert total minutes to hours and minutes
-            const totalHours = Math.floor(totalMinutes / 60);
-            const remainingMinutes = totalMinutes % 60;
-
-            resultDiv.textContent = `Total Time: ${totalHours} Hours, ${remainingMinutes} Minutes`;
-
-            // Show the copy button if there are results
-            if (individualResultsDiv.children.length > 0) {
-                copyButton.style.display = 'block';
-            } else {
-                copyButton.style.display = 'none';
-            }
+            resultDiv.innerText = `Total Time: ${formatDuration(totalMinutes)}`;
+            copyButton.style.display = 'inline-block'; // Show copy button
         });
 
-        // Event listener to clear all inputs and reset the result
+        // Convert time to minutes
+        function timeToMinutes(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        // Format duration into hours and minutes
+        function formatDuration(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return `${hours} Hours, ${mins} Minutes`;
+        }
+
+        // Clear the form
         clearButton.addEventListener('click', () => {
-            const inputs = document.querySelectorAll('.start-time, .end-time');
-            inputs.forEach(input => input.value = '');
+            document.querySelectorAll('input[type="time"]').forEach(input => input.value = '');
+            resultDiv.innerText = 'Total Time: 0 Hours, 0 Minutes';
             individualResultsDiv.innerHTML = '';
-            resultDiv.textContent = 'Total Time: 0 Hours, 0 Minutes';
-            copyButton.style.display = 'none'; // Hide the copy button
         });
 
-        // Event listener to copy results to clipboard
+        // Copy result to clipboard
         copyButton.addEventListener('click', () => {
-            let text = 'Results:\n';
-            const individualResults = individualResultsDiv.textContent;
-            text += individualResults;
-            text += `\n${resultDiv.textContent}`;
-
-            // Copy to clipboard
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Results copied to clipboard!');
+            const resultText = resultDiv.innerText;
+            navigator.clipboard.writeText(resultText).then(() => {
+                alert('Result copied to clipboard');
             });
         });
     </script>

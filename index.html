@@ -5,24 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hours Calculator</title>
     <style>
-        /* General Body Styling */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f9f9f9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
         }
 
         /* Tab Button Styling */
         .tab {
             display: flex;
-            justify-content: space-between;
-            width: 100%;
+            justify-content: center;
             background-color: #333;
         }
 
@@ -52,7 +45,7 @@
             padding: 20px;
             margin: 0 auto;
             width: 100%;
-            max-width: 600px;
+            max-width: 400px;
             background-color: #ffffff;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -61,26 +54,24 @@
 
         /* Textarea */
         textarea {
-            width: calc(100% - 22px);
+            width: 100%;
+            height: 80px;
             padding: 10px;
-            margin: 10px 0;
+            margin-bottom: 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            height: 150px;
-            resize: none;
-            font-size: 16px;
+            border-radius: 5px;
         }
 
         /* Buttons */
         button {
             display: block;
             width: 48%;
-            padding: 12px;
+            padding: 10px;
             margin: 5px 1%;
-            color: white;
-            font-size: 16px;
+            color: #fff;
+            font-size: 14px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
         }
 
@@ -141,28 +132,11 @@
             padding-top: 10px;
         }
 
-        /* Footer Styling */
-        footer {
-            width: 100%;
-            background-color: gray;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            font-size: 14px;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
-
-        footer a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
+        /* Buttons Inline */
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
         }
 
         /* Responsive Design */
@@ -193,7 +167,7 @@
 
     <!-- Manual Hours Calculator -->
     <div id="manual" class="tabcontent">
-        <h2>Manual Hours Calculator</h2>
+        <h2>Hours Manual Calculator</h2>
         <div id="manual_fields">
             <div class="time-row">
                 <label>Start</label>
@@ -210,10 +184,6 @@
         <div id="manual_result" class="results"></div>
         <button id="copy_manual_button" onclick="copyManualResult()" style="display: none;">Copy Results</button>
     </div>
-
-    <footer>
-        Created by <a href="https://www.linkedin.com/in/masumkhaled" target="_blank">Masum Khaled</a>
-    </footer>
 
     <script>
         // Open Tab Functionality
@@ -244,18 +214,16 @@
                 return;
             }
 
-            const timeBlocks = input.match(/\d{1,2}[:h]?\d{0,2}(?:\s|-)\d{1,2}[:h]?\d{0,2}/g) || [];
+            const timeBlocks = input.split(",");
             let totalMinutes = 0;
 
             timeBlocks.forEach((block, index) => {
-                const [start, end] = block.split(/[-\s]/).map(time => time.trim());
+                const [start, end] = block.split("-").map(time => time.trim());
                 const [startH, startM] = start.split(":").map(Number);
                 const [endH, endM] = end.split(":").map(Number);
-
-                let blockMinutes = (endH * 60 + endM) - (startH * 60 + startM);
-                if (blockMinutes < 0) blockMinutes += 24 * 60; // Handle overnight times
-
+                const blockMinutes = (endH * 60 + endM) - (startH * 60 + startM);
                 totalMinutes += blockMinutes;
+
                 const hours = Math.floor(blockMinutes / 60);
                 const minutes = blockMinutes % 60;
 
@@ -309,9 +277,7 @@
                 if (start && end) {
                     const [startH, startM] = start.split(":").map(Number);
                     const [endH, endM] = end.split(":").map(Number);
-                    let blockMinutes = (endH * 60 + endM) - (startH * 60 + startM);
-                    if (blockMinutes < 0) blockMinutes += 24 * 60; // Handle overnight times
-
+                    const blockMinutes = (endH * 60 + endM) - (startH * 60 + startM);
                     totalMinutes += blockMinutes;
 
                     const hours = Math.floor(blockMinutes / 60);
@@ -321,28 +287,24 @@
                 }
             });
 
-        const totalHours = Math.floor(totalMinutes / 60);
+            const totalHours = Math.floor(totalMinutes / 60);
             const totalMinutesRemaining = totalMinutes % 60;
             resultDiv.innerHTML += `<b>Total Time: ${totalHours} Hours, ${totalMinutesRemaining} Minutes</b>`;
             copyButton.style.display = "block";
         }
 
         function clearManual() {
-            const container = document.getElementById("manual_fields");
-            container.innerHTML = ''; // Clear all time rows
-            addRow(); // Add a new row to keep the initial row
+            document.getElementById("manual_fields").innerHTML = `
+                <div class="time-row">
+                    <label>Start</label>
+                    <input type="time" class="start_time">
+                    <label>End</label>
+                    <input type="time" class="end_time">
+                </div>
+            `;
             document.getElementById("manual_result").textContent = "";
             document.getElementById("copy_manual_button").style.display = "none";
         }
-
-        function copyManualResult() {
-            const result = document.getElementById("manual_result").textContent;
-            navigator.clipboard.writeText(result);
-            alert("Results copied to clipboard!");
-        }
-
-        // Initialize default tab
-        document.getElementById("defaultOpen").click();
     </script>
 </body>
 </html>

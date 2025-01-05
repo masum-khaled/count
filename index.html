@@ -15,12 +15,13 @@
         /* Tab Button Styling */
         .tab {
             display: flex;
-            justify-content: center;
+            width: 100%; /* Ensure it takes full width */
             background-color: #333;
+            box-sizing: border-box; /* Include padding and border in width calculation */
         }
 
         .tab button {
-            flex: 1;
+            flex: 1; /* Makes each button take up equal width */
             background-color: inherit;
             border: none;
             outline: none;
@@ -29,6 +30,7 @@
             color: white;
             font-size: 17px;
             text-align: center;
+            box-sizing: border-box; /* Include padding in width */
         }
 
         .tab button:hover {

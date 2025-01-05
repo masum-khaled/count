@@ -66,7 +66,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 20px;
             display: none;
             font-size: 16px;
             transition: background-color 0.3s ease;
@@ -98,7 +98,7 @@
             transform: scale(1.1);
         }
         .tab-button.active {
-            background-color: #007BFF;
+            background-color: gray;
             color: white;
             transform: scale(1.1);
         }
@@ -167,7 +167,6 @@
             background-color: #007BFF;
             color: white;
             border-radius: 5px;
-            margin-top: 10px;
             margin-bottom: 10px;
             height: 48px; /* Fixed height for uniformity */
         }
@@ -187,7 +186,7 @@
 </head>
 <body>
     <div class="tabs">
-        <button class="tab-button active" onclick="openTab(event, 'auto')">Auto Cal</button>
+        <button class="tab-button active" onclick="openTab(event, 'auto')">Auto</button>
         <button class="tab-button" onclick="openTab(event, 'manual')">Manual</button>
     </div>
 

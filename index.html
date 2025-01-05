@@ -12,9 +12,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Adjust the layout */
-            height: 100vh;
+            justify-content: flex-start;
+            height: 100%;
             margin: 0;
+            padding: 0;
         }
 
         .container {
@@ -24,17 +25,18 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             width: 100%;
+            box-sizing: border-box;
         }
 
         h1 {
             text-align: center;
             color: #007BFF;
+            font-size: 24px;
         }
 
-        /* Tabs styling */
         .tabs {
             display: flex;
-            justify-content: center; /* Center the tab buttons */
+            justify-content: center;
             margin-bottom: 20px;
             width: 100%;
         }
@@ -46,7 +48,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
-            margin: 0 10px; /* Space between tabs */
+            margin: 0 10px;
             transition: background-color 0.3s ease;
         }
 
@@ -55,7 +57,6 @@
             font-weight: bold;
         }
 
-        /* Tab content */
         .tab-content {
             display: none;
         }
@@ -69,7 +70,6 @@
             width: 100%;
         }
 
-        /* Manual Calculator styling */
         .line {
             display: flex;
             flex-direction: column;
@@ -102,33 +102,40 @@
             margin-top: 20px;
             display: flex;
             justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            color: white;
+            width: 45%;
+            margin-bottom: 10px;
         }
 
         button#add-line {
             background-color: #4CAF50;
-            color: white;
         }
 
         button#calculate {
             background-color: #007BFF;
-            color: white;
         }
 
         button#clear {
             background-color: #FF4C4C;
-            color: white;
         }
 
         button#copy {
             background-color: #FFC107;
             color: black;
-            display: none; /* Initially hidden */
+            display: none;
             margin-top: 20px;
         }
 
         .result-container {
-            margin-top: 30px; /* Space above results */
-            margin-bottom: 30px; /* Space below results */
+            margin-top: 30px;
         }
 
         .result {
@@ -138,14 +145,13 @@
         }
 
         .result-wrapper {
-            text-align: right; /* Aligns copy button */
+            text-align: right;
         }
 
-        /* Footer styling */
         footer {
             width: 100%;
             margin-top: 40px;
-            background-color: #FF6F61; /* Soft red background */
+            background-color: #FF6F61;
             text-align: center;
             padding: 10px 0;
             color: white;
@@ -153,7 +159,48 @@
             border-radius: 5px;
             position: relative;
             bottom: 0;
-            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                margin: 5px 0;
+                width: 100%;
+            }
+
+            .buttons button {
+                width: 48%;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .result {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .buttons button {
+                width: 100%;
+            }
+
+            .tab-button {
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .line input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -176,9 +223,7 @@
     <div id="manual" class="tab-content">
         <div class="container">
             <h1>Hours Range Calculator</h1>
-            <div id="lines-container">
-                <!-- Initial lines will be added here -->
-            </div>
+            <div id="lines-container"></div>
             <button id="add-line">+ Add More Lines</button>
             <div class="buttons">
                 <button id="calculate">Calculate</button>
@@ -201,18 +246,13 @@
     <script>
         // Function to open a specific tab
         function openTab(event, tabName) {
-            // Hide all tab contents
             const tabContents = document.querySelectorAll('.tab-content');
             tabContents.forEach(tab => tab.classList.remove('active'));
 
-            // Remove active class from all tab buttons
             const tabButtons = document.querySelectorAll('.tab-button');
             tabButtons.forEach(button => button.classList.remove('active'));
 
-            // Show the selected tab content
             document.getElementById(tabName).classList.add('active');
-
-            // Add active class to the clicked tab button
             event.currentTarget.classList.add('active');
         }
 
@@ -224,7 +264,7 @@
         // Auto Calculate function
         function calculateHours() {
             let input = document.getElementById('inputSchedule').value;
-            input = input.replace(/\s+/g, ' ').trim(); // Normalize whitespace
+            input = input.replace(/\s+/g, ' ').trim();
             const timeRanges = input.match(/\d{1,2}[:h]?\d{0,2}(?:\s|-)\d{1,2}[:h]?\d{0,2}/g) || [];
 
             let totalHours = 0;
@@ -237,12 +277,12 @@
             resultText += `\nTotal Hours: ${totalHours.toFixed(2)}`;
             
             document.getElementById('result').innerText = resultText;
-            document.getElementById('copyBtn').style.display = 'block'; // Show the copy button
+            document.getElementById('copyBtn').style.display = 'block';
         }
 
         function parseTime(time) {
             if (time === '00h' || time === '00:00') {
-                return 24 * 60; // Treat 00h or 00:00 as 24h
+                return 24 * 60;
             }
             if (time.includes('h')) {
                 let [hours, minutes] = time.split('h').map(Number);
@@ -255,10 +295,8 @@
         }
 
         function parseTimeRange(timeRange) {
-            const cleanedRange = timeRange.replace(/\s+/g, '-'); // Replace spaces with hyphens
+            const cleanedRange = timeRange.replace(/\s+/g, '-');
             const [start, end] = cleanedRange.split('-').map(parseTime);
-
-            // Handle cases where the end time is less than the start time (e.g., 17h30-00h30)
             const adjustedEnd = end <= start ? end + 24 * 60 : end;
 
             return (adjustedEnd - start) / 60;
@@ -280,7 +318,6 @@
         const resultDiv = document.getElementById('result');
         const individualResultsDiv = document.getElementById('individual-results');
 
-        // Function to add a new line for start and end time input
         function addLine() {
             const line = document.createElement('div');
             line.className = 'line';
@@ -298,25 +335,21 @@
             linesContainer.appendChild(line);
         }
 
-        // Add 2 initial lines (adjusted as per your request)
         for (let i = 0; i < 2; i++) {
             addLine();
         }
 
-        // Event listener to add more lines
         addLineButton.addEventListener('click', addLine);
 
-        // Convert number to ordinal (1 -> 1st, 2 -> 2nd, etc.)
         function toOrdinal(n) {
             const s = ["th", "st", "nd", "rd"];
             const v = n % 100;
             return n + (s[(v - 20) % 10] || s[v] || s[0]);
         }
 
-        // Event listener to calculate the total time
         calculateButton.addEventListener('click', () => {
             let totalMinutes = 0;
-            individualResultsDiv.innerHTML = ''; // Clear previous results
+            individualResultsDiv.innerHTML = '';
 
             const startTimeInputs = document.querySelectorAll('.start-time');
             const endTimeInputs = document.querySelectorAll('.end-time');
@@ -338,30 +371,26 @@
             });
 
             resultDiv.innerText = `Total Time: ${formatDuration(totalMinutes)}`;
-            copyButton.style.display = 'inline-block'; // Show copy button
+            copyButton.style.display = 'inline-block';
         });
 
-        // Convert time to minutes
         function timeToMinutes(time) {
             const [hours, minutes] = time.split(':').map(Number);
             return hours * 60 + minutes;
         }
 
-        // Format duration into hours and minutes
         function formatDuration(minutes) {
             const hours = Math.floor(minutes / 60);
             const mins = minutes % 60;
             return `${hours} Hours, ${mins} Minutes`;
         }
 
-        // Clear the form
         clearButton.addEventListener('click', () => {
             document.querySelectorAll('input[type="time"]').forEach(input => input.value = '');
             resultDiv.innerText = 'Total Time: 0 Hours, 0 Minutes';
             individualResultsDiv.innerHTML = '';
         });
 
-        // Copy result to clipboard
         copyButton.addEventListener('click', () => {
             const resultText = resultDiv.innerText;
             navigator.clipboard.writeText(resultText).then(() => {

@@ -15,19 +15,21 @@
 
     /* Tab Button Styling */
     .tab {
-      overflow: hidden;
+      display: flex;
+      justify-content: center;
       background-color: #333;
     }
 
     .tab button {
+      flex: 1;
       background-color: inherit;
-      float: left;
       border: none;
       outline: none;
       cursor: pointer;
       padding: 14px 16px;
       color: white;
       font-size: 17px;
+      text-align: center;
     }
 
     .tab button:hover {
@@ -42,18 +44,12 @@
     .tabcontent {
       display: none;
       padding: 20px;
-    }
-
-    /* Calculator Wrapper */
-    .calculator-container {
-      width: 300px; /* Ensures both calculators have the same width */
+      margin: 0 auto;
+      width: 300px;
       background-color: #ffffff;
-      padding: 20px;
-      margin: 20px auto;
       border: 1px solid #ddd;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      text-align: center;
     }
 
     /* Textarea */
@@ -116,9 +112,18 @@
       border-radius: 5px;
     }
 
+    /* Results Section */
+    .results {
+      text-align: left;
+      font-size: 14px;
+      margin-top: 15px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
-      .calculator-container {
+      .tabcontent {
         width: 100%;
       }
     }
@@ -132,31 +137,27 @@
 
   <!-- Auto Hours Calculator -->
   <div id="auto" class="tabcontent">
-    <div class="calculator-container">
-      <h2>Auto Hours Calculator</h2>
-      <textarea id="auto_input" placeholder="Paste your schedule here (e.g., 09:00-12:00, 13:00-15:00)"></textarea>
-      <button onclick="autoCalculate()">Calculate Total Hours</button>
-      <div id="auto_result"></div>
-    </div>
+    <h2>Auto Hours Calculator</h2>
+    <textarea id="auto_input" placeholder="Paste your schedule here (e.g., 09:00-12:00, 13:00-15:00)"></textarea>
+    <button onclick="autoCalculate()">Calculate Total Hours</button>
+    <div id="auto_result" class="results"></div>
   </div>
 
   <!-- Manual Hours Calculator -->
   <div id="manual" class="tabcontent">
-    <div class="calculator-container">
-      <h2>Hours Manual Calculator</h2>
-      <div id="manual_fields">
-        <div class="time-row">
-          <label>Start</label>
-          <input type="time" class="start_time">
-          <label>End</label>
-          <input type="time" class="end_time">
-        </div>
+    <h2>Hours Manual Calculator</h2>
+    <div id="manual_fields">
+      <div class="time-row">
+        <label>Start</label>
+        <input type="time" class="start_time">
+        <label>End</label>
+        <input type="time" class="end_time">
       </div>
-      <button onclick="addRow()">+ Add More Lines</button>
-      <button onclick="manualCalculate()">Calculate</button>
-      <button onclick="clearManual()">Clear</button>
-      <div id="manual_result"></div>
     </div>
+    <button onclick="addRow()">+ Add More Lines</button>
+    <button onclick="manualCalculate()">Calculate</button>
+    <button onclick="clearManual()">Clear</button>
+    <div id="manual_result" class="results"></div>
   </div>
 
   <script>
@@ -179,23 +180,32 @@
     function autoCalculate() {
       const input = document.getElementById("auto_input").value;
       const resultDiv = document.getElementById("auto_result");
+      resultDiv.innerHTML = ""; // Clear previous results
+
       if (!input) {
         resultDiv.textContent = "Please paste your schedule!";
         return;
       }
+
       const timeBlocks = input.split(",");
       let totalMinutes = 0;
 
-      timeBlocks.forEach(block => {
+      timeBlocks.forEach((block, index) => {
         const [start, end] = block.split("-").map(time => time.trim());
         const [startH, startM] = start.split(":").map(Number);
         const [endH, endM] = end.split(":").map(Number);
-        totalMinutes += (endH * 60 + endM) - (startH * 60 + startM);
+        const blockMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+        totalMinutes += blockMinutes;
+
+        const hours = Math.floor(blockMinutes / 60);
+        const minutes = blockMinutes % 60;
+
+        resultDiv.innerHTML += `Line ${index + 1}: ${hours} Hours, ${minutes} Minutes<br>`;
       });
 
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-      resultDiv.textContent = `Total Time: ${hours} Hours, ${minutes} Minutes`;
+      const totalHours = Math.floor(totalMinutes / 60);
+      const totalMinutesRemaining = totalMinutes % 60;
+      resultDiv.innerHTML += `<b>Total Time: ${totalHours} Hours, ${totalMinutesRemaining} Minutes</b>`;
     }
 
     // Manual Hours Calculator
@@ -215,18 +225,29 @@
     function manualCalculate() {
       const rows = document.querySelectorAll("#manual_fields .time-row");
       let totalMinutes = 0;
-      rows.forEach(row => {
+      const resultDiv = document.getElementById("manual_result");
+      resultDiv.innerHTML = ""; // Clear previous results
+
+      rows.forEach((row, index) => {
         const start = row.querySelector(".start_time").value;
         const end = row.querySelector(".end_time").value;
+
         if (start && end) {
           const [startH, startM] = start.split(":").map(Number);
           const [endH, endM] = end.split(":").map(Number);
-          totalMinutes += (endH * 60 + endM) - (startH * 60 + startM);
+          const blockMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+          totalMinutes += blockMinutes;
+
+          const hours = Math.floor(blockMinutes / 60);
+          const minutes = blockMinutes % 60;
+
+          resultDiv.innerHTML += `Line ${index + 1}: ${hours} Hours, ${minutes} Minutes<br>`;
         }
       });
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-      document.getElementById("manual_result").textContent = `Total Time: ${hours} Hours, ${minutes} Minutes`;
+
+      const totalHours = Math.floor(totalMinutes / 60);
+      const totalMinutesRemaining = totalMinutes % 60;
+      resultDiv.innerHTML += `<b>Total Time: ${totalHours} Hours, ${totalMinutesRemaining} Minutes</b>`;
     }
 
     function clearManual() {

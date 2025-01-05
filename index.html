@@ -90,10 +90,17 @@
       background-color: #dc3545;
     }
 
+    button[onclick="addRow()"] {
+      background-color: #28a745;
+      width: 100%;
+      margin: 10px 0;
+    }
+
     button[onclick="copyAutoResult()"],
     button[onclick="copyManualResult()"] {
       background-color: #6c757d;
       width: 100%;
+      margin-top: 10px;
     }
 
     /* Time Row Styling */
@@ -155,8 +162,8 @@
       <button onclick="autoCalculate()">Calculate</button>
       <button onclick="clearAuto()">Clear</button>
     </div>
-    <button onclick="copyAutoResult()">Copy Results</button>
     <div id="auto_result" class="results"></div>
+    <button id="copy_auto_button" onclick="copyAutoResult()" style="display: none;">Copy Results</button>
   </div>
 
   <!-- Manual Hours Calculator -->
@@ -175,8 +182,8 @@
       <button onclick="manualCalculate()">Calculate</button>
       <button onclick="clearManual()">Clear</button>
     </div>
-    <button onclick="copyManualResult()">Copy Results</button>
     <div id="manual_result" class="results"></div>
+    <button id="copy_manual_button" onclick="copyManualResult()" style="display: none;">Copy Results</button>
   </div>
 
   <script>
@@ -199,7 +206,9 @@
     function autoCalculate() {
       const input = document.getElementById("auto_input").value;
       const resultDiv = document.getElementById("auto_result");
+      const copyButton = document.getElementById("copy_auto_button");
       resultDiv.innerHTML = ""; // Clear previous results
+      copyButton.style.display = "none";
 
       if (!input) {
         resultDiv.textContent = "Please paste your schedule!";
@@ -225,11 +234,13 @@
       const totalHours = Math.floor(totalMinutes / 60);
       const totalMinutesRemaining = totalMinutes % 60;
       resultDiv.innerHTML += `<b>Total Time: ${totalHours} Hours, ${totalMinutesRemaining} Minutes</b>`;
+      copyButton.style.display = "block";
     }
 
     function clearAuto() {
       document.getElementById("auto_input").value = "";
       document.getElementById("auto_result").textContent = "";
+      document.getElementById("copy_auto_button").style.display = "none";
     }
 
     function copyAutoResult() {
@@ -256,7 +267,9 @@
       const rows = document.querySelectorAll("#manual_fields .time-row");
       let totalMinutes = 0;
       const resultDiv = document.getElementById("manual_result");
+      const copyButton = document.getElementById("copy_manual_button");
       resultDiv.innerHTML = ""; // Clear previous results
+      copyButton.style.display = "none";
 
       rows.forEach((row, index) => {
         const start = row.querySelector(".start_time").value;
@@ -278,6 +291,7 @@
       const totalHours = Math.floor(totalMinutes / 60);
       const totalMinutesRemaining = totalMinutes % 60;
       resultDiv.innerHTML += `<b>Total Time: ${totalHours} Hours, ${totalMinutesRemaining} Minutes</b>`;
+      copyButton.style.display = "block";
     }
 
     function clearManual() {
@@ -290,6 +304,7 @@
         </div>
       `;
       document.getElementById("manual_result").textContent = "";
+      document.getElementById("copy_manual_button").style.display = "none";
     }
 
     function copyManualResult() {

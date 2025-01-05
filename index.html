@@ -230,7 +230,8 @@
         return;
       }
 
-      const timeBlocks = input.split(",");
+      // Remove non-time-related text and only focus on time ranges
+      const timeBlocks = input.match(/\d{1,2}h?\s*\d{1,2}h?/g) || [];
       let totalMinutes = 0;
 
       timeBlocks.forEach((block, index) => {

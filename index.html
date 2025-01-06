@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabbed Auto Hours Calculator</title>
+    <title>Tabbed Hours Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -50,7 +50,6 @@
             border-radius: 5px;
             margin: 20px auto;
             width: 80%;
-            text-align: center;
         }
 
         .tab-content.active {
@@ -125,34 +124,12 @@
             text-align: center;
             padding: 15px;
             font-size: 14px;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            border-radius: 0 0;
-        }
-
-        footer a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
         }
 
         .line {
             display: flex;
             flex-direction: column;
             margin-bottom: 15px;
-        }
-
-        .line-title {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            margin-bottom: 5px;
         }
 
         .line input {
@@ -163,26 +140,10 @@
             border-radius: 5px;
         }
 
-        .line-result {
-            margin-top: 5px;
-            font-size: 14px;
-            color: #555555;
-            text-align: center;
-        }
-
         .buttons {
             margin-top: 20px;
             display: flex;
             justify-content: space-between;
-        }
-
-        .result-container {
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-
-        .result-wrapper {
-            text-align: right;
         }
     </style>
 </head>
@@ -196,9 +157,9 @@
         <div class="container">
             <h1>Auto Hours Calculator</h1>
             <textarea id="inputSchedule" placeholder="Paste your schedule here"></textarea>
-            <button onclick="calculateHours()">Calculate Total Hours</button>
-            <div class="result" id="result"></div>
-            <button class="copy-btn" id="copyBtn" onclick="copyToClipboard()">Copy Result</button>
+            <button onclick="calculateAutoHours()">Calculate Total Hours</button>
+            <div class="result" id="resultAuto"></div>
+            <button class="copy-btn" id="copyBtnAuto" onclick="copyAutoResults()">Copy Result</button>
         </div>
     </div>
 
@@ -208,21 +169,15 @@
             <div id="lines-container"></div>
             <button id="add-line">+ Add More Lines</button>
             <div class="buttons">
-                <button id="calculate">Calculate</button>
-                <button id="clear">Clear</button>
+                <button id="calculateRange">Calculate</button>
+                <button id="clearRange">Clear</button>
             </div>
-            <div class="result-container">
-                <div id="individual-results"></div>
-                <div class="result" id="result2">Total Time: 0 Hours, 0 Minutes</div>
-                <div class="result-wrapper">
-                    <button id="copy2">Copy Results</button>
-                </div>
-            </div>
+            <div class="result" id="resultRange">Total Time: 0 Hours, 0 Minutes</div>
         </div>
     </div>
 
     <footer>
-        Created by <a href="https://www.linkedin.com/in/masumkhaled" target="_blank">Masum Khaled</a>
+        Created by Masum Khaled
     </footer>
 
     <script>
@@ -240,32 +195,92 @@
             });
         });
 
-        // Code for Tab 1: Auto Hours Calculator
-        function calculateHours() { /* Your existing logic */ }
+        // Tab 1: Auto Hours Calculator
+        function calculateAutoHours() {
+            const input = document.getElementById('inputSchedule').value.trim();
+            const lines = input.split('\n');
+            let totalMinutes = 0;
 
-        function copyToClipboard() { /* Your existing logic */ }
+            lines.forEach(line => {
+                const [start, end] = line.split('-').map(t => t.trim());
+                const [startHours, startMinutes] = start.split(':').map(Number);
+                const [endHours, endMinutes] = end.split(':').map(Number);
 
-        // Code for Tab 2: Hours Range Calculator
+                const startTotal = startHours * 60 + startMinutes;
+                const endTotal = endHours * 60 + endMinutes;
+
+                totalMinutes += (endTotal >= startTotal)
+                    ? endTotal - startTotal
+                    : (24 * 60 - startTotal) + endTotal;
+            });
+
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+
+            document.getElementById('resultAuto').textContent = `Total Hours: ${hours} Hours, ${minutes} Minutes`;
+            document.getElementById('copyBtnAuto').style.display = 'block';
+        }
+
+        function copyAutoResults() {
+            const result = document.getElementById('resultAuto').textContent;
+            navigator.clipboard.writeText(result).then(() => alert('Results copied to clipboard!'));
+        }
+
+        // Tab 2: Hours Range Calculator
         const linesContainer = document.getElementById('lines-container');
         const addLineButton = document.getElementById('add-line');
-        const calculateButton = document.getElementById('calculate');
-        const clearButton = document.getElementById('clear');
-        const copyButton2 = document.getElementById('copy2');
-        const resultDiv2 = document.getElementById('result2');
-        const individualResultsDiv = document.getElementById('individual-results');
+        const calculateButton = document.getElementById('calculateRange');
+        const clearButton = document.getElementById('clearRange');
+        const resultRange = document.getElementById('resultRange');
 
-        function addLine() { /* Your existing logic */ }
+        function addLine() {
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.innerHTML = `
+                <input type="time" class="start-time">
+                <input type="time" class="end-time">
+            `;
+            linesContainer.appendChild(line);
+        }
 
-        function calculateRanges() { /* Your existing logic */ }
+        function calculateRangeHours() {
+            const lines = document.querySelectorAll('.line');
+            let totalMinutes = 0;
 
-        function clearInputs() { /* Your existing logic */ }
+            lines.forEach(line => {
+                const startInput = line.querySelector('.start-time').value;
+                const endInput = line.querySelector('.end-time').value;
 
-        function copyResults() { /* Your existing logic */ }
+                if (startInput && endInput) {
+                    const [startHours, startMinutes] = startInput.split(':').map(Number);
+                    const [endHours, endMinutes] = endInput.split(':').map(Number);
+
+                    const startTotal = startHours * 60 + startMinutes;
+                    const endTotal = endHours * 60 + endMinutes;
+
+                    totalMinutes += (endTotal >= startTotal)
+                        ? endTotal - startTotal
+                        : (24 * 60 - startTotal) + endTotal;
+                }
+            });
+
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+
+            resultRange.textContent = `Total Time: ${hours} Hours, ${minutes} Minutes`;
+        }
+
+        function clearRangeInputs() {
+            linesContainer.innerHTML = '';
+            resultRange.textContent = 'Total Time: 0 Hours, 0 Minutes';
+        }
 
         addLineButton.addEventListener('click', addLine);
-        calculateButton.addEventListener('click', calculateRanges);
-        clearButton.addEventListener('click', clearInputs);
-        copyButton2.addEventListener('click', copyResults);
+        calculateButton.addEventListener('click', calculateRangeHours);
+        clearButton.addEventListener('click', clearRangeInputs);
+
+        // Initialize with one line
+        addLine();
     </script>
 </body>
 </html>
